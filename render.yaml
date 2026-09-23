@@ -1,11 +1,6 @@
 # Render Web Service Configuration
-# Database: Render-managed PostgreSQL (free tier)
-
-databases:
-  - name: eventhub-db
-    plan: free
-    databaseName: eventhub
-    user: eventhub_user
+# Database: Supabase PostgreSQL (permanent free tier).
+# Set the DATABASE_URL env var (below) to your Supabase "Session pooler" URI.
 
 services:
   - type: web
@@ -23,10 +18,11 @@ services:
         value: ".onrender.com"
       - key: PYTHON_VERSION
         value: "3.12.3"
+      # Supabase connection string (Session pooler, port 5432).
+      # Supabase Dashboard -> Project Settings -> Database -> Connection string.
+      # Format: postgresql://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres
       - key: DATABASE_URL
-        fromDatabase:
-          name: eventhub-db
-          property: connectionString
+        sync: false
       - key: EMAIL_BACKEND
         value: "django.core.mail.backends.smtp.EmailBackend"
       - key: EMAIL_HOST

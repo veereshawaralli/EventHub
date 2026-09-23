@@ -131,12 +131,21 @@ DATABASES = {
     }
 }
 
-# Override with DATABASE_URL when available (production)
+# Override with DATABASE_URL when available (production / Supabase).
+# Supabase Postgres works out of the box: set DATABASE_URL to the Supabase
+# "Session pooler" connection string (IPv4-friendly, port 5432).
+#   conn_health_checks avoids stale-connection errors behind the pooler.
+#   ssl_require is forced in production (Supabase only accepts SSL connections).
 DATABASE_URL = config("DATABASE_URL", default=None)
 if DATABASE_URL:
     import dj_database_url
 
-    DATABASES["default"] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    DATABASES["default"] = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=600,
+        conn_health_checks=True,
+        ssl_require=not DEBUG,
+    )
 
 # ---------------------------------------------------------------------------
 # Password validation
